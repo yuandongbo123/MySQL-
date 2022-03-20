@@ -102,7 +102,7 @@
 ### 1.数据库的基本操作
 
 > ```
-> create database 数据库名称;
+>  create database 数据库名称;
 >  show create database db1; #创建一个叫db1的数据库
 >  drop database db1; #删除数据库
 >  show databases; #show所有数据库
@@ -114,6 +114,7 @@
 ### 2.数据表的基本操作
 数据库创建成功后可在该数据库中创建数据表(简称为表)存储数据。请注意：在操作数据表之前应使用“USE 数据库名;”指定操作是在哪个数据库中进行先关操作，否则会抛出“No database selected”错误。
 语法如下：
+
 > ```
 >  create table 表名(
 >          字段1 字段类型,
@@ -122,8 +123,9 @@
 >          字段n 字段类型
 > );
 > ```
+
 > - 创建学生表 MySQL数据表
-> ···
+> ```
 >  create table student(
 >  id int,
 >  name varchar(20),
@@ -137,10 +139,9 @@
 >  desc student;
 >  ```
 ### 3.修改数据表
->  ```
->  有时，希望对表中的某些信息进行修改，例如：修改表名、修改字段名、修改字段 数据类型…等等。在MySQL中使用**alter table**修改数据表.
-> ```
+>  - 有时，希望对表中的某些信息进行修改，例如：修改表名、修改字段名、修改字段 数据类型…等等。在MySQL中使用**alter table**修改数据表.
 > - rename 修改名字
+> ```
 >  alter table student rename to stu; #rename 修改命令
 >  ```
 >  - 修改字段名 MySQL命令：change
@@ -150,11 +151,13 @@
 >  - 修改字段数据类型 MySQL命令：modify
 >  ```
 >  alter table stu modify sname int; #modify修改数据类型
->  ···
+>  ```
 >  - 增加字段 address
+
 >  ```
 >  alter table stu add address varchar(50);
 >  ```
+
 >  - 删除字段 MySQL命令：drop
 >  ```
 >  alter table stu drop address;
@@ -180,7 +183,7 @@
 > ```
 > 字段名 数据类型 primary key;
 > create table student(
-? id int primary key,  #说明主键是id
+> id int primary key,  #说明主键是id
 > name varchar(20)
 > );
 > ```
@@ -197,7 +200,7 @@
 ### 3.默认值约束
 
 默认值约束即DEFAULT用于给数据表中的字段指定默认值，即当在表中插入一条新记录时若未给该字段赋值，那么，数据库系统会自动为这个字段插人默认值；其基本的语法格式如下所示：
-> 字段名 数据类型 DEFAULT 默认值；
+> - 字段名 数据类型 DEFAULT 默认值；
 > ```
 > create table student03(
 > id int,
@@ -208,7 +211,7 @@
 
 ### 5.唯一性约束
 唯一性约束即UNIQUE用于保证数据表中字段的唯一性，**即表中字段的值不能重复出现，其基本的语法格式如下所示：**
-> 字段名 数据类型 UNIQUE;
+> - 字段名 数据类型 UNIQUE;
 > ```
 > create table student04(
 > id int,
@@ -257,9 +260,9 @@
 > ```
 
 #### 6.3 关于外键约束需要注意的细节
-***1、从表里的外键通常为主表的主键
-2、从表里外键的数据类型必须与主表中主键的数据类型一致
-3、主表发生变化时应注意主表与从表的数据一致性问题**
+**1、从表里的外键通常为主表的主键**
+**2、从表里外键的数据类型必须与主表中主键的数据类型一致**
+**3、主表发生变化时应注意主表与从表的数据一致性问题**
 
 ## 六、数据表插入数据
 在MySQL通过INSERT语句向数据表中插入数据。在此，我们先准备一张学生表，代码如下：
@@ -332,6 +335,384 @@
 >  -- 插入数据
 >  insert into student (id,name,age,gender) values (2,'lucy',17,'female'),(3,'jack',19,'male'),(4,'tom',18,'male'),(5,'sal',19,'female'),(6,'sun',20,'male')
 > ,(7,'sad',13,'female'),(8,'sam',14,'male');
+
+### 1. DELETE基本语法
+- 在该语法中：表名用于指定要执行删除操作的表；[WHERE 条件表达式]为可选参数用于指定删除的条件。
+> ```
+> DELETE FROM 表名 [WHERE 条件表达式];
+> ```
+
+### 2. DELETE删除部分数据
+- 示例：删除age等于14的所有记录 MySQL命令：
+
+> ```
+> delete from student where age=14;
+> ```
+
+### 3. DELETE删除全部数据
+- 示例：删除student表中的所有记录 MySQL命令：
+> ```
+> delete from student;
+> ```
+
+### 4. TRUNCATE和DETELE的区别
+
+**TRUNCATE和DETELE都能实现删除表中的所有数据的功能，但两者也是有区别的：
+1、DELETE语句后可跟WHERE子句，可通过指定WHERE子句中的条件表达式只删除满足条件的部分记录；但是，TRUNCATE语句只能用于删除表中的所有记录。
+2、使用TRUNCATE语句删除表中的数据后，再次向表中添加记录时自动增加字段的默认初始值重新由1开始；使用DELETE语句删除表中所有记录后，再次向表中添加记录时自动增加字段的值为删除时该字段的最大值加1
+3、DELETE语句是DML语句，TRUNCATE语句通常被认为是DDL语句**
+
+## 九、MySQL数据表简单查询
+
+### 1.简单查询概述
+- 简单查询即不含**where的select**语句。在此，我们讲解简单查询中最常用的两种查询：**查询所有字段和查询指定字段**。在此，先准备测试数据，代码如下：
+> -- 创建数据库
+> DROP DATABASE IF EXISTS mydb;
+> CREATE DATABASE mydb;
+> USE mydb;
+> -- 创建student表
+> CREATE TABLE student (
+>    sid CHAR(6),
+>    sname VARCHAR(50),
+>    age INT,
+>    gender VARCHAR(50) DEFAULT 'male'
+> );
+> 
+> -- 向student表插入数据
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1001', 'lili', 14, 'male');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1002', 'wang', 15, 'female');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1003', 'tywd', 16, 'male');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1004', 'hfgs', 17, 'female');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1005', 'qwer', 18, 'male');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1006', 'zxsd', 19, 'female');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1007', 'hjop', 16, 'male');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1008', 'tyop', 15, 'female');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1009', 'nhmk', 13, 'male');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1010', 'xdfv', 17, 'female');
+> ```
+
+### 2.查询所有字段（方法不唯一只是举例）
+- 查询所有字段 MySQL命令：
+> ```
+> select * from student;
+> ```
+
+
+### 3.查询指定字段（sid、sname）
+
+- 查询指定字段（sid、sname） MySQL命令：
+> ```
+> select sid,sname from student;
+> ```
+
+### 4.常数的查询
+
+- 在SELECT中除了书写列名，还可以书写常数。可以用于标记常数的查询日期标记 MySQL命令：
+
+> ```
+> select sid,sname,'2021-03-02' from student;
+> ```
+
+### 5.从查询结果中过滤重复数据
+- 在使用DISTINCT 时需要注意：在SELECT查询语句中DISTINCT关键字只能用在第一个所查列名之前。MySQL命令：
+> ```
+> select distinct gender from student;
+> ```
+
+### 6.算术运算符（举例加运算符）
+- 在SELECT查询语句中还可以使用加减乘除运算符。 查询学生10年后的年龄 MySQL命令：
+> - 查询学生10年后的年龄 MySQL命令：
+> ```
+>  select sname,age+10 from student;
+>  ```
+
+
+
+## 十、函数
+- 在此，先准备测试数据，代码如下：
+
+> -- 创建数据库
+> DROP DATABASE IF EXISTS mydb;
+> CREATE DATABASE mydb;
+> USE mydb;
+> -- 创建student表
+> CREATE TABLE student (
+>    sid CHAR(6),
+>    sname VARCHAR(50),
+>    age INT,
+>    gender VARCHAR(50) DEFAULT 'male'
+> );
+> 
+> -- 向student表插入数据
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1001', 'lili', 14, 'male');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1002', 'wang', 15, 'female');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1003', 'tywd', 16, 'male');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1004', 'hfgs', 17, 'female');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1005', 'qwer', 18, 'male');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1006', 'zxsd', 19, 'female');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1007', 'hjop', 16, 'male');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1008', 'tyop', 15, 'female');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1009', 'nhmk', 13, 'male');
+> INSERT INTO student (sid,sname,age,gender) VALUES ('S_1010', 'xdfv', 17, 'female');
+> ``
+
+### 1.聚合函数
+在开发中，我们常常有类似的需求：**统计某个字段的最大值、最小值、 平均值等等。为此，MySQL中提供了聚合函数来实现这些功能。所谓聚合，就是将多行汇总成一行；其实，所有的聚合函数均如此——输入多行，输出一行。聚合函数具有自动滤空的功能，若某一个值为NULL，那么会自动将其过滤使其不参与运算。
+聚合函数使用规则：
+只有SELECT子句和HAVING子句、ORDER BY子句中能够使用聚合函数。例如，在WHERE子句中使用聚合函数是错误的。
+接下来，我们学习常用聚合函数**
+
+#### 1.1、count（）
+> - 统计表中数据的行数或者统计指定列其值不为NULL的数据个数查询有多少该表中有多少人MySQL命令：
+> ```
+> select count(*) frome student;
+> ```
+
+#### 1.2、max（）
+- 计算指定列的最大值，如果指定列是字符串类型则使用字符串排序运算
+
+> - 查询该学生表中年纪最大的学生
+> ```
+> select max(age) from student;
+> ```
+
+#### 1.3、min（）
+- 计算指定列的最小值，如果指定列是字符串类型则使用字符串排序运算
+> - 查询该学生表中年纪最小的学生 MySQL命令：
+> ```
+> select sname,min(age) from student;
+> ```
+
+
+#### 1.4、sum（）
+- 计算指定列的数值和，如果指定列类型不是数值类型则计算结果为0
+> - 查询该学生表中年纪的总和 MySQL命令：
+> ```
+> select sum(age) from student;
+> ```
+
+
+#### 1.5、avg（）
+- 计算指定列的平均值，如果指定列类型不是数值类型则计算结果为
+> - 查询该学生表中年纪的平均数 MySQL命令：
+> ```
+> select avg(age) from student;
+> ```
+
+
+### 2.其他常用函数
+#### 2.1 时间函数
+```
+SELECT NOW();
+SELECT DAY (NOW());
+SELECT DATE (NOW());
+SELECT TIME (NOW());
+SELECT YEAR (NOW());
+SELECT MONTH (NOW());
+SELECT CURRENT_DATE();
+SELECT CURRENT_TIME();
+SELECT CURRENT_TIMESTAMP();
+SELECT ADDTIME('14:23:12','01:02:01');
+SELECT DATE_ADD(NOW(),INTERVAL 1 DAY);
+SELECT DATE_ADD(NOW(),INTERVAL 1 MONTH);
+SELECT DATE_SUB(NOW(),INTERVAL 1 DAY);
+SELECT DATE_SUB(NOW(),INTERVAL 1 MONTH);
+SELECT DATEDIFF('2019-07-22','2019-05-05');
+```
+
+#### 2.2、字符串函数
+```
+--连接函数
+SELECT CONCAT ()
+--
+SELECT INSTR ();
+--统计长度
+SELECT LENGTH();
+```
+#### 2.3、数学函数
+
+```
+-- 绝对值
+SELECT ABS(-136);
+-- 向下取整
+SELECT FLOOR(3.14);
+-- 向上取整
+SELECT CEILING(3.14);
+```
+
+## 十一、条件查询
+- 数据库中存有大量数据，我们可根据需求获取指定的数据。此时，我们可在查询语句中通过**WHERE**子句指定查询条件对查询结果进行过滤。在开始学习条件查询之前，我们先准备测试数据，代码如下：
+```
+-- 创建数据库
+DROP DATABASE IF EXISTS mydb;
+CREATE DATABASE mydb;
+USE mydb;
+
+-- 创建student表
+CREATE TABLE student (
+    sid CHAR(6),
+    sname VARCHAR(50),
+    age INT,
+    gender VARCHAR(50) DEFAULT 'male'
+);
+
+-- 向student表插入数据
+INSERT INTO student (sid,sname,age,gender) VALUES ('S_1001', 'lili', 14, 'male');
+INSERT INTO student (sid,sname,age,gender) VALUES ('S_1002', 'wang', 15, 'female');
+INSERT INTO student (sid,sname,age,gender) VALUES ('S_1003', 'tywd', 16, 'male');
+INSERT INTO student (sid,sname,age,gender) VALUES ('S_1004', 'hfgs', 17, 'female');
+INSERT INTO student (sid,sname,age,gender) VALUES ('S_1005', 'qwer', 18, 'male');
+INSERT INTO student (sid,sname,age,gender) VALUES ('S_1006', 'zxsd', 19, 'female');
+INSERT INTO student (sid,sname,age,gender) VALUES ('S_1007', 'hjop', 16, 'male');
+INSERT INTO student (sid,sname,age,gender) VALUES ('S_1008', 'tyop', 15, 'female');
+INSERT INTO student (sid,sname,age,gender) VALUES ('S_1009', 'nhmk', 13, 'male');
+INSERT INTO student (sid,sname,age,gender) VALUES ('S_1010', 'xdfv', 17, 'female');
+INSERT INTO student (sid,sname,age,gender) VALUES ('S_1012', 'lili', 14, 'male');
+```
+
+### 1.使用关系运算符查询
+- 在**WHERE**中可使用关系运算符进行条件查询，常用的关系运算符如下所示：
+
+> |关系运算符|	说明|
+> |:----|:----|
+> |=|	等于|
+> |<>	|不等于|
+> |!=|	不等于|
+> |<	|小于|
+> |<=	|小于等于|
+> |>|	大于|
+> |>=	|大于等于|
+
+> - 查询年龄等于或大于17的学生的信息 MySQL命令：
+> ```
+> select * from student where age>=17;
+> ```
+
+### 2.使用IN关键字查询
+- **IN关键字**用于判断某个字段的值是否在指定集合中。如果字段的值恰好在指定的集合中，则将字段所在的记录将査询出来。
+> - 查询sid为1002和1003的学生信息 MySQL命令：
+> ```
+> select * from student where sid in('1001','1003');
+> ```
+
+> - 查询sid为1001以外的学生的信息 MySQL命令：
+> ```
+> select * from student where sid not in ('1001');
+> ```
+
+### 3.使用BETWEEN AND关键字查询
+- **between and**用于判断某个字段的值是否在指定的范围之内。如果字段的值在指定范围内，则将所在的记录将查询出来
+查询15到18岁的学生信息 MySQL命令：
+> ```
+> select * from student where age between 15 and 18;
+> ```
+
+### 4.使用空值查询
+
+- 在MySQL中，使用 **is null** 关键字判断字段的值是否为空值。请注意：空值NULL不同于0，也不同于空字符串由于student表没有空值就不演示查询空值的了
+
+> ``` 
+> select * from student where sname is  null;
+> select * from student where sname is not null;
+> ```
+
+### 5.使用AND关键字查询
+- 在MySQL中可使用**and**关键字可以连接两个或者多个查询条件。
+
+> - 查询年纪大于15且性别为male的学生信息 MySQL命令：
+> ```
+> select * from student where age>15 and gender="male";
+> ```
+
+### 6.使用OR关键字查询
+- 在使用SELECT语句查询数据时可使用**or**关键字连接多个査询条件。在使用OR关键字时，只要记录满足其中任意一个条件就会被查询出来
+> - 查询年纪大于15或者性别为male的学生信息 MySQL命令：
+> ```
+> elect * from student where age>18 or gender="male";
+> ```
+
+### 7.使用LIKE关键字查询
+- MySQL中可使用**like**关键字可以判断两个字符串是否相匹配
+
+#### 7.1 普通字符串
+> - 查询sname中与lihua匹配的学生信息 MySQL命令：
+> ```
+> select * from student where sname like "lihua";
+> ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
