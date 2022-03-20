@@ -101,9 +101,9 @@
 ## 四、数据库、数据表的基本操作
 ### 1.数据库的基本操作
 
-> ```create database 数据库名称;
->    -- 创建一个叫db1的数据库
->  show create database db1;
+> ```
+> create database 数据库名称;
+>  show create database db1; #创建一个叫db1的数据库
 >  drop database db1; #删除数据库
 >  show databases; #show所有数据库
 >  alter database db1 character set gbk; #将数据库的字符集修改为gbk MySQL命令
@@ -111,7 +111,27 @@
 >  select database(); # 查看当前使用的数据库 MySQL命令：
 >  ```
 
-
+### 2.数据表的基本操作
+数据库创建成功后可在该数据库中创建数据表(简称为表)存储数据。请注意：在操作数据表之前应使用“USE 数据库名;”指定操作是在哪个数据库中进行先关操作，否则会抛出“No database selected”错误。
+语法如下：
+> ```
+>  create table 表名(
+>          字段1 字段类型,
+>          字段2 字段类型,
+>          …
+>          字段n 字段类型
+> );
+> ```
+> - 创建学生表 MySQL数据表
+> ···
+>  create table student(
+>  id int,
+>  name varchar(20),
+>  gender varchar(10),
+>  birthday date
+>  );
+>  ```
+>
 
 
 
