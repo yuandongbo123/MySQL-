@@ -136,25 +136,202 @@
 >  show table; 
 >  desc student;
 >  ```
->  - 修改数据表
+### 3.修改数据表
 >  ```
 >  有时，希望对表中的某些信息进行修改，例如：修改表名、修改字段名、修改字段 数据类型…等等。在MySQL中使用**alter table**修改数据表.
 > ```
->  alter table student **rename** to stu; #rename 修改命令
+> - rename 修改名字
+>  alter table student rename to stu; #rename 修改命令
 >  ```
->  - 修改字段名 MySQL命令：
+>  - 修改字段名 MySQL命令：change
 >  ```
->  alter table stu **change** name sname varchar(10); #change 修改字段命令
+>  alter table stu change name sname varchar(10); #change 修改字段命令
 >  ```
->  - 修改字段数据类型 MySQL命令：
+>  - 修改字段数据类型 MySQL命令：modify
 >  ```
->  alter table stu**modify** sname int; #modify修改数据类型
+>  alter table stu modify sname int; #modify修改数据类型
 >  ···
 >  - 增加字段 address
 >  ```
 >  alter table stu add address varchar(50);
 >  ```
->  
+>  - 删除字段 MySQL命令：drop
+>  ```
+>  alter table stu drop address;
+>  ```
+
+### 4. 删除数据表
+> ```
+> drop table 表名;
+> ```
+
+## 五、数据表的约束
+为**防止错误的数据被插入到数据表**，MySQL中定义了一些维护数据库完整性的规则；这些规则常称为表的约束。常见约束如下：
+
+|约束条件|	说明|
+|:----|:----|
+|PRIMARY KEY|	主键约束用于唯一标识对应的记录|
+|FOREIGN KEY	|外键约束|
+|NOT NULL|	非空约束|
+|UNIQUE|	唯一性约束|
+|DEFAULT	|默认值约束，用于设置字段的默认值|
+
+### 1.主键约束
+> ```
+> 字段名 数据类型 primary key;
+> create table student(
+? id int primary key,  #说明主键是id
+> name varchar(20)
+> );
+> ```
+
+### 2.非空约束
+
+> ```
+> create table student02(
+> id int
+> name varchar(20) not null
+> );
+> ```
+
+### 3.默认值约束
+
+默认值约束即DEFAULT用于给数据表中的字段指定默认值，即当在表中插入一条新记录时若未给该字段赋值，那么，数据库系统会自动为这个字段插人默认值；其基本的语法格式如下所示：
+> 字段名 数据类型 DEFAULT 默认值；
+> ```
+> create table student03(
+> id int,
+> name varchar(20),
+> gender varchar(10) default 'male'
+> );
+> ```
+
+### 5.唯一性约束
+唯一性约束即UNIQUE用于保证数据表中字段的唯一性，**即表中字段的值不能重复出现，其基本的语法格式如下所示：**
+> 字段名 数据类型 UNIQUE;
+> ```
+> create table student04(
+> id int,
+> name varchar(20) unique
+> );
+> ```
+
+### 6.外键约束
+**外键约束即FOREIGN KEY常用于多张表之间的约束**基本语法如下
+> - 在创建数据表时语法如下：
+> CONSTRAINT 外键名 FOREIGN KEY (从表外键字段) REFERENCES 主表 (主键字段)
+> -- 将创建数据表创号后语法如下：
+> ALTER TABLE 从表名 ADD CONSTRAINT 外键名 FOREIGN KEY (从表外键字段) REFERENCES 主表 (主键字段);
+
+> - 示例：创建一个学生表 MySQL命令：
+> ```
+> create table student05(
+> id int primary key,
+> name varchar(20)
+> );
+> ```
+> - 示例：创建一个班级表 MySQL命令：
+> ```
+> create table class(
+> classid int primary key,
+> studentid int
+> );
+> ```
+> - 示例：**学生表作为主表，班级表作为副表设置外键， MySQL命令：**
+> ```
+> alter table class add constraint fk_class_studentid foreign key(studentid) references student05(id);
+> ```
+> 
+
+
+#### 6.1 数据一致性概念
+大家知道：建立外键是为了保证数据的完整和统一性。但是，如果主表中的数据被删除或修改从表中对应的数据该怎么办呢？很明显，从表中对应的数据也应该被删除，否则数据库中会存在很多无意义的垃圾数据。
+
+#### 6.2 删除外键
+> ```
+> alter table 从表名 drop foreign key 外键名；
+> ```
+> - 删除外键 MySQL命令：
+> ```
+> alter table class drop foreign key fk_class_studentid;
+> ```
+
+#### 6.3 关于外键约束需要注意的细节
+***1、从表里的外键通常为主表的主键
+2、从表里外键的数据类型必须与主表中主键的数据类型一致
+3、主表发生变化时应注意主表与从表的数据一致性问题**
+
+## 六、数据表插入数据
+在MySQL通过INSERT语句向数据表中插入数据。在此，我们先准备一张学生表，代码如下：
+> ```
+>  create table student(
+>  id int,
+>  name varchar(30),
+>  age int,
+>  gender varchar(30)
+> );
+> ```
+### 1. 为表中所有字段插入数据
+每个字段与其值是严格一一对应的。也就是说：每个值、值的顺序、值的类型必须与对应的字段相匹配。但是，各字段也无须与其在表中定义的顺序一致，它们只要与 VALUES中值的顺序一致即可。
+语法如下：
+> ``` 
+> INSERT INTO 表名（字段名1,字段名2,...) VALUES (值 1,值 2,...);
+> ```
+> - 向学生表中插入一条学生信息 MySQL命令：
+> ```
+> insert into student (id,name,age,gender) values (1,'bob',16,'male');
+> ```
+
+### 2. 为表中指定字段插入数据
+
+> ```
+> INSERT INTO 表名（字段名1,字段名2,...) VALUES (值 1,值 2,...);
+> ```
+
+### 3. 同时插入多条记录
+> 插入数据的方法基本和为表中所有字段插入数据，一样，只是需要插入的字段由你自己指定
+> ```
+> INSERT INTO 表名 [(字段名1,字段名2,...)]VALUES (值 1,值 2,…),(值 1,值 2,…),...;
+> ```
+> - 示例：向学生表中插入多条学生信息 MySQL命令：
+> ```
+> insert into student (id,name,age,gender) values (2,'lucy',17,'female'),(3,'jack',19,'male'),(4,'tom',18,'male');
+> ```
+
+
+## 七、更新数据
+在MySQL通过UPDATE语句更新数据表中的数据。在此，我们将就用六中的student学生表
+### 1. UPDATE基本语法
+> ```
+> UPDATE 表名 SET 字段名1=值1[,字段名2 =值2,…] [WHERE 条件表达式];
+> ```
+>  在该语法中：字段名1、字段名2…用于指定要更新的字段名称；值1、值 2…用于表示字段的新数据；WHERE 条件表达式 是可选的，它用于指定更新数据需要满足的条件
+
+### 2. UPDATE更新部分数据
+> - 将name为tom的记录的age设置为20并将其gender设置为female MySQL命令：
+> ```
+> update student set age=20,gender='female' where name='tom';
+> ```
+
+### 3. UPDATE更新全部数据
+
+> - 将所有记录的age设置为18 MySQL命令：
+> ```
+> update student set age=18;
+> ```
+
+## 八、删除数据
+在MySQL通过DELETE语句删除数据表中的数据。在此，我们先准备一张数据表，代码如下：
+> -- 创建学生表
+>  create table student(
+>  id int,
+>  name varchar(30),
+>  age int,
+>  gender varchar(30)
+>  );
+>  -- 插入数据
+>  insert into student (id,name,age,gender) values (2,'lucy',17,'female'),(3,'jack',19,'male'),(4,'tom',18,'male'),(5,'sal',19,'female'),(6,'sun',20,'male')
+> ,(7,'sad',13,'female'),(8,'sam',14,'male');
 
 
 
