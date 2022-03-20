@@ -131,8 +131,30 @@
 >  birthday date
 >  );
 >  ```
->
-
+> - 查看数据表
+> ```
+>  show table; 
+>  desc student;
+>  ```
+>  - 修改数据表
+>  ```
+>  有时，希望对表中的某些信息进行修改，例如：修改表名、修改字段名、修改字段 数据类型…等等。在MySQL中使用**alter table**修改数据表.
+> ```
+>  alter table student **rename** to stu; #rename 修改命令
+>  ```
+>  - 修改字段名 MySQL命令：
+>  ```
+>  alter table stu **change** name sname varchar(10); #change 修改字段命令
+>  ```
+>  - 修改字段数据类型 MySQL命令：
+>  ```
+>  alter table stu**modify** sname int; #modify修改数据类型
+>  ···
+>  - 增加字段 address
+>  ```
+>  alter table stu add address varchar(50);
+>  ```
+>  
 
 
 
