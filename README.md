@@ -98,10 +98,18 @@
 
 
 
+## 四、数据库、数据表的基本操作
+### 1.数据库的基本操作
 
-
-
-
+> '''create database 数据库名称;
+>    -- 创建一个叫db1的数据库
+>  show create database db1;
+>  drop database db1; #删除数据库
+>  show databases; #show所有数据库
+>  alter database db1 character set gbk; #将数据库的字符集修改为gbk MySQL命令
+>  use db1; #切换数据库命令
+>  select database(); # 查看当前使用的数据库 MySQL命令：
+>  '''
 
 
 
