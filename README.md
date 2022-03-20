@@ -12,19 +12,19 @@
 >- 6.desc mytable; #显示表格
 >- 7.drop database my/mytable  #删除数据库/表格
 
-## SQL简介
+## SQL
 
-### 1.SQL简介
+### 一.SQL简介
 > Structure Query Language(结构化查询语言)简称SQL，它被美国国家标准局(ANSI)确定为关系型数据库语言的美国标准，后被国际化标准组织(ISO)采纳为关系数据库语言的国际标准。数据库管理系统可以通过SQL管理数据库；定义和操作数据，维护数据的完整性和安全性。
 
 
-### 2.SQL的优点
+### 二.SQL的优点
 > 1、简单易学，具有很强的操作性
 > 2、绝大多数重要的数据库管理系统均支持SQL
 > 3、高度非过程化；用SQL操作数据库时大部分的工作由DBMS自动完成
 
 
-### 3.SQL的分类
+### 三.SQL的分类
 > **1、DDL(Data Definition Language) 数据定义语言，用来操作数据库、表、列等； 常用语句：CREATE、 ALTER、DROP
 > 2、DML(Data Manipulation Language) 数据操作语言，用来操作数据库中表里的数据；常用语句：INSERT、 UPDATE、 DELETE
 > 3、DCL(Data Control Language) 数据控制语言，用来操作访问权限和安全级别； 常用语句：GRANT、DENY
