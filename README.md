@@ -1,7 +1,7 @@
 # MySQL-学习笔记
 
 ## 0.基础用法
-[参考原文链接]"https://blog.csdn.net/weixin_45851945/article/details/114287877"
+[参考链接](https://blog.csdn.net/weixin_45851945/article/details/114287877)
 >- 第一次链接服务器(#cd 到  sql/bin ）
 >- 1.net start MySQL80
 >- 2.mysql -u root -p    #输入密码(如果在client直接输入密码即可
