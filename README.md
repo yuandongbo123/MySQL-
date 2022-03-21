@@ -25,10 +25,10 @@
 
 
 ### 三.SQL的分类
-> **1、DDL(Data Definition Language) 数据定义语言，用来操作数据库、表、列等； 常用语句：CREATE、 ALTER、DROP
-> 2、DML(Data Manipulation Language) 数据操作语言，用来操作数据库中表里的数据；常用语句：INSERT、 UPDATE、 DELETE
-> 3、DCL(Data Control Language) 数据控制语言，用来操作访问权限和安全级别； 常用语句：GRANT、DENY
-> 4、DQL(Data Query Language) 数据查询语言，用来查询数据 常用语句：SELECT**
+> - 1、DDL(Data Definition Language) 数据定义语言，用来操作数据库、表、列等； 常用语句：CREATE、 ALTER、DROP
+> - 2、DML(Data Manipulation Language) 数据操作语言，用来操作数据库中表里的数据；常用语句：INSERT、 UPDATE、 DELETE
+> - 3、DCL(Data Control Language) 数据控制语言，用来操作访问权限和安全级别； 常用语句：GRANT、DENY
+> - 4、DQL(Data Query Language) 数据查询语言，用来查询数据 常用语句：SELECT
 
 
 ## 2.数据库的三大范式
@@ -240,11 +240,19 @@
 > studentid int
 > );
 > ```
+
+
 > - 示例：**学生表作为主表，班级表作为副表设置外键， MySQL命令：**
 > ```
 > alter table class add constraint fk_class_studentid foreign key(studentid) references student05(id);
 > ```
-> 
+
+> 显示外键约束
+> ```
+> show create table class;
+> ```
+
+
 
 
 #### 6.1 数据一致性概念
@@ -642,17 +650,96 @@ INSERT INTO student (sid,sname,age,gender) VALUES ('S_1012', 'lili', 14, 'male')
 
 
 
+#### 7.2 含有%通配的字符串
+- %用于匹配任意长度的字符串。例如，字符串“a%”匹配以字符a开始任意长度的字符串
+> - 查询学生姓名以li开始的记录 MySQL命令：
+> ``
+> select * from student where sname like 'li%';
+> ```
+> - 查询以a结尾的记录
+> ```
+> select * from student where sname like '%a';
+> ```
 
+> - 查询包含u的记录
+> ```
+> select * from student where sname like "%u%";
+> ```
 
+#### 7.3 含有_通配的字符串
+- 下划线通配符只匹配单个字符，如果要匹配多个字符，需要连续使用多个下划线通配符。例如，字符串“ab_”匹配以字符串“ab”开始长度为3的字符串，如abc、abp等等；字符串“a__d”匹配在字符“a”和“d”之间包含两个字符的字符串，如"abcd"、"atud"等等。
+> - 查询以li开头且长度为5的字符串
+> ```
+> select * from student where sname like 'li___';
+> ```
 
+### 8.使用LIMIT限制查询结果的数量
+> - order by... asc 以升序排列
+> - 查询年纪最小的三个人
+> ```
+> select * from student order by age asc limit 4;
+> ```
 
+### 9.使用GROUP BY进行分组查询
+- **GROUP BY** 子句可像切蛋糕一样将表中的数据进行分组，再进行查询等操作。换言之，可通俗地理解为：通过GROUP BY将原来的表拆分成了几张小表。接下来，我们通过一个例子开始学习GROUP BY，代码如下
 
+```
+-- 创建数据库
+DROP DATABASE IF EXISTS mydb;
+CREATE DATABASE mydb;
+USE mydb;
 
+-- 创建员工表
+CREATE TABLE employee (
+    id int,
+    name varchar(50),
+    salary int,
+    departmentnumber int
+);
 
+-- 向员工表中插入数据
+INSERT INTO employee values(1,'tome',2000,1001); 
+INSERT INTO employee values(2,'lucy',9000,1002); 
+INSERT INTO employee values(3,'joke',5000,1003); 
+INSERT INTO employee values(4,'wang',3000,1004); 
+INSERT INTO employee values(5,'chen',3000,1001); 
+INSERT INTO employee values(6,'yukt',7000,1002); 
+INSERT INTO employee values(7,'rett',6000,1003); 
+INSERT INTO employee values(8,'mujk',4000,1004); 
+INSERT INTO employee values(9,'poik',3000,1001);
+```
 
+#### 9.1 GROUP BY和聚合函数一起使用
 
+> - 统计各部门员工个数 MySQL命令：
+> ```
+> select count(*),departmentnumber from employee group by departmentnumber;
+> ```
 
+> - 统计部门编号大于1001的各部门员工个数 MySQL命令
+> ```
+> select count(*), departmentnumber from employee where departmentnumber>1001 group by departmentnumber;
+> ```
 
+#### 9.2 GROUP BY和聚合函数以及HAVING一起使用(group by  ..... having 配合聚合函数查询一定范围的数据)
+> - 统计工资总和大于8000的部门 MySQL命令
+> ```
+> select sum(salary), departmentnumber from employee group by departmentnumber having sum(salary)>8000;
+> ```
+
+### 10.使用ORDER BY对查询结果排序（order by ... asc/dsc)
+- 从表中査询出来的数据可能是无序的或者其排列顺序不是我们期望的。为此，我们可以使用ORDER BY对查询结果进行排序其语法格式如下所示：
+```
+SELECT 字段名1,字段名2,…
+FROM 表名
+ORDER BY 字段名1 [ASC 丨 DESC],字段名2 [ASC | DESC];
+```
+
+在该语法中：字段名1、字段名2是查询结果排序的依据；参数 ASC表示按照升序排序，DESC表示按照降序排序；默认情况下，按照ASC方式排序。通常情况下，ORDER BY子句位于整个SELECT语句的末尾。
+- 查询所有职工按照salary大小升序排列 MySQL命令：
+> ```
+> select * from employee order by salary asc;
+> ```
 
 
 
