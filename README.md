@@ -736,26 +736,150 @@ ORDER BY 字段名1 [ASC 丨 DESC],字段名2 [ASC | DESC];
 ```
 
 在该语法中：字段名1、字段名2是查询结果排序的依据；参数 ASC表示按照升序排序，DESC表示按照降序排序；默认情况下，按照ASC方式排序。通常情况下，ORDER BY子句位于整个SELECT语句的末尾。
-- 查询所有职工按照salary大小升序排列 MySQL命令：
+- 查询所有职工按照salary大小升序/降序排列 MySQL命令：
 > ```
 > select * from employee order by salary asc;
+> select * from student order by age desc;
 > ```
 
 
 
+## 十二、别名设置
+- 在査询数据时可为表和字段取別名，该别名代替表和字段的原名参与查询操作。
 
+### 1.为表取别名
+- 在查询操作时，假若表名很长使用起来就不太方便，此时可为表取一个別名，用该别名来代替表的名称。语法格式如下所示：
+```
+select * from 表名 as 表的别名 where ...
+```
 
+### 2.为字段取别名
+- 在查询操作时，假若字段名很长使用起来就不太方便，此时可该字段取一个別名，用该别名来代替字段的名称。语法格式如下所示：
+```
+SELECT 字段名1 [AS] 别名1 , 字段名2 [AS] 别名2 , ... FROM 表名 WHERE ... ;
+```
+> - 更改employee
+> ```
+> select id as id2,name as names  from employee;
+> ```
 
+## 十三、表的关联关系
+在实际开发中数据表之间存在着各种关联关系。在此，介绍MySQL中数据表的三种关联关系。
+- 多对一
+多对一(亦称为一对多)是数据表中最常见的一种关系。例如：员工与部门之间的关系，一个部门可以有多个员工；而一个员工不能属于多个部门只属于某个部门。在多对一的表关系 中，应将外建在多的一方否则会造成数据的冗余。
+- 多对多
+多对多是数据表中常见的一种关系。例如：学生与老师之间的关系，一个学生可以有多个老师而且一个老师有多个学生。通常情况下，为了实现这种关系需要定义一张中间表(亦称为连接表)该表会存在两个外键分别参照老师表和学生表。
+- 一对一
+在开发过程中，一对一的关联关系在数据库中并不常见；因为以这种方式存储的信息通常会放在同一张表中。
+接下来，我们来学习在一对多的关联关系中如果添加和删除数据。先准备一些测试数据，代码如下：
+```
+DROP TABLE IF EXISTS student;
+DROP TABLE IF EXISTS class;
 
+-- 创建班级表
+CREATE TABLE class(
+    cid int(4) NOT NULL PRIMARY KEY,
+    cname varchar(30) 
+);
 
+-- 创建学生表
+CREATE TABLE student(
+    sid int(8) NOT NULL PRIMARY KEY,
+    sname varchar(30),
+    classid int(8) NOT NULL
+);
 
+-- 为学生表添加外键约束
+ALTER TABLE student ADD CONSTRAINT fk_student_classid FOREIGN KEY(classid) REFERENCES class(cid);
+-- 向班级表插入数据
+INSERT INTO class(cid,cname)VALUES(1,'Java');
+INSERT INTO class(cid,cname)VALUES(2,'Python');
 
+-- 向学生表插入数据
+INSERT INTO student(sid,sname,classid)VALUES(1,'tome',1);
+INSERT INTO student(sid,sname,classid)VALUES(2,'lucy',1);
+INSERT INTO student(sid,sname,classid)VALUES(3,'lili',2);
+INSERT INTO student(sid,sname,classid)VALUES(4,'domi',2);
+```
+> ```
+> - 为学生表结构添加外键
+> alter table student add constraint fk_student_classid foreign key(主键) references class(链接键);
+> ```
 
+### 1.关联查询
+- 查询Java班的所有学生 MySQL命令：
+```
+select * from student where classid=(select cid from class where cname='Java');
 
+```
 
+### 2.关于关联关系的删除数据
+- 请从班级表中删除Java班级。在此，请注意：班级表和学生表之间存在关联关系；要删除Java班级，应该先删除学生表中与该班相关联的学生。否则，假若先删除Java班那么学生表中的cid就失去了关联
+> - 删除Java班 MySQL命令：
+> ```
+> delete from student where classid=(select cid from class where cname='Java';
+> ```
 
+## 十四、多表连接查询
+### 1.交叉连接查询
+- 交叉连接返回的结果是被连接的两个表中所有数据行的笛卡儿积；比如：集合A={a,b}，集合B={0,1,2}，则集合A和B的笛卡尔积为{(a,0),(a,1),(a,2),(b,0),(b,1),(b,2)}。所以，交叉连接也被称为笛卡尔连接，其语法格式如下：
+```
+SELECT * FROM 表1 CROSS JOIN 表2;
+```
+在该语法中：CROSS JOIN用于连接两个要查询的表，通过该语句可以查询两个表中所有的数据组合。
+**由于这个交叉连接查询在实际运用中没有任何意义，所以只做为了解即可**
 
+### 2.内连接查询
+- 内连接(Inner Join)又称简单连接或自然连接，是一种非常常见的连接查询。内连接使用比较运算符对两个表中的数据进行比较并列出与连接条件匹配的数据行，组合成新的 记录。也就是说在内连接查询中只有满足条件的记录才能出现在查询结果中。其语法格式如下：
 
+```
+SELECT 查询字段1,查询字段2, ... FROM 表1 [INNER] JOIN 表2 ON 表1.关系字段=表2.关系字段
+```
+准备数据，代码如下：
+```
+-- 若存在数据库mydb则删除
+DROP DATABASE IF EXISTS mydb;
+-- 创建数据库mydb
+CREATE DATABASE mydb;
+-- 选择数据库mydb
+USE mydb;
+
+-- 创建部门表
+CREATE TABLE department(
+  did int (4) NOT NULL PRIMARY KEY, 
+  dname varchar(20)
+);
+
+-- 创建员工表
+CREATE TABLE employee (
+  eid int (4) NOT NULL PRIMARY KEY, 
+  ename varchar (20), 
+  eage int (2), 
+  departmentid int (4) NOT NULL
+);
+
+-- 向部门表插入数据
+INSERT INTO department VALUES(1001,'财务部');
+INSERT INTO department VALUES(1002,'技术部');
+INSERT INTO department VALUES(1003,'行政部');
+INSERT INTO department VALUES(1004,'生活部');
+-- 向员工表插入数据
+INSERT INTO employee VALUES(1,'张三',19,1003);
+INSERT INTO employee VALUES(2,'李四',18,1002);
+INSERT INTO employee VALUES(3,'王五',20,1001);
+INSERT INTO employee VALUES(4,'赵六',20,1004);
+```
+- 查询员工姓名及其所属部门名称 MySQL命令：
+> ```
+> select employee.ename,department.dname from department inner join employee on department.did=employee.departmentid;
+> ```
+
+### 3.外连接查询
+- 在使用内连接查询时我们发现：返回的结果只包含符合查询条件和连接条件的数据。但是，有时还需要在返回查询结果中不仅包含符合条件的数据，而且还包括左表、右表或两个表中的所有数据，此时我们就需要使用外连接查询。外连接又分为左(外)连接和右(外)连接。其语法格式如下：
+
+```
+SELECT 查询字段1,查询字段2, ... FROM 表1 LEFT | RIGHT [OUTER] JOIN 表2 ON 表1.关系字段=表2.关系字段 WHERE 条件
+```
 
 
 
