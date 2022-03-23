@@ -881,33 +881,137 @@ INSERT INTO employee VALUES(4,'赵六',20,1004);
 SELECT 查询字段1,查询字段2, ... FROM 表1 LEFT | RIGHT [OUTER] JOIN 表2 ON 表1.关系字段=表2.关系字段 WHERE 条件
 ```
 
+由此可见，外连接的语法格式和内连接非常相似，只不过使用的是LEFT [OUTER] JOIN、RIGHT [OUTER] JOIN关键字。其中，关键字左边的表被称为左表，关键字右边的表被称为右表；OUTER可以省略。
+在使用左(外)连接和右(外)连接查询时，查询结果是不一致的，具体如下：
+1、LEFT [OUTER] JOIN 左(外)连接：返回包括左表中的所有记录和右表中符合连接条件的记录。
+2、RIGHT [OUTER] JOIN 右(外)连接：返回包括右表中的所有记录和左表中符合连接条件的记录。
+```
+-- 若存在数据库mydb则删除
+DROP DATABASE IF EXISTS mydb;
+-- 创建数据库mydb
+CREATE DATABASE mydb;
+-- 选择数据库mydb
+USE mydb;
+
+-- 创建班级表
+CREATE TABLE class(
+  cid int (4) NOT NULL PRIMARY KEY, 
+  cname varchar(20)
+);
+
+-- 创建学生表
+CREATE TABLE student (
+  sid int (4) NOT NULL PRIMARY KEY, 
+  sname varchar (20), 
+  sage int (2), 
+  classid int (4) NOT NULL
+);
+-- 向班级表插入数据
+INSERT INTO class VALUES(1001,'Java');
+INSERT INTO class VALUES(1002,'C++');
+INSERT INTO class VALUES(1003,'Python');
+INSERT INTO class VALUES(1004,'PHP');
+
+-- 向学生表插入数据
+INSERT INTO student VALUES(1,'张三',20,1001);
+INSERT INTO student VALUES(2,'李四',21,1002);
+INSERT INTO student VALUES(3,'王五',24,1002);
+INSERT INTO student VALUES(4,'赵六',23,1003);
+INSERT INTO student VALUES(5,'Jack',22,1009);
+```
+准备这组数据有一定的特点，为的是让大家直观的看出左连接与右连接的不同之处
+1、班级编号为1004的PHP班级没有学生
+2、学号为5的学生王跃跃班级编号为1009，该班级编号并不在班级表中
+
+#### 3.1 左（外）连接查询
+- 左(外)连接的结果包括LEFT JOIN子句中指定的左表的所有记录，以及所有满足连接条件的记录。如果左表的某条记录在右表中不存在则在右表中显示为空。查询每个班的班级ID、班级名称及该班的所有学生的名字 MySQL命令：
+
+> ```
+> select class.cid,class.cname,student.sname from class left outer join student on class.cid=student.classid;
+> ```
+
+展示结果分析：
+1、分别找出Java班、C++班、Python班的学生
+2、右表的王跃跃不满足查询条件故其没有出现在查询结果中
+3、虽然左表的PHP班没有学生，但是任然显示了PHP的信息；但是，它对应的学生名字为NULL
+
+## 十五、子查询
+- 子查询是指一个查询语句嵌套在另一个查询语句内部的查询；该查询语句可以嵌套在一个 SELECT、SELECT…INTO、INSERT…INTO等语句中。在执行查询时，首先会执行子查询中的语句，再将返回的结果作为外层查询的过滤条件。在子査询中通常可以使用比较运算符和IN、EXISTS、ANY、ALL等关键字。
+准备数据
+```
+DROP TABLE IF EXISTS student;
+DROP TABLE IF EXISTS class;
+
+-- 创建班级表
+CREATE TABLE class(
+  cid int (4) NOT NULL PRIMARY KEY, 
+  cname varchar(20)
+);
+
+-- 创建学生表
+CREATE TABLE student (
+  sid int (4) NOT NULL PRIMARY KEY, 
+  sname varchar (20), 
+  sage int (2), 
+  classid int (4) NOT NULL
+);
+
+-- 向班级表插入数据
+INSERT INTO class VALUES(1001,'Java');
+INSERT INTO class VALUES(1002,'C++');
+INSERT INTO class VALUES(1003,'Python');
+INSERT INTO class VALUES(1004,'PHP');
+INSERT INTO class VALUES(1005,'Android');
+
+-- 向学生表插入数据
+INSERT INTO student VALUES(1,'张三',20,1001);
+INSERT INTO student VALUES(2,'李四',21,1002);
+INSERT INTO student VALUES(3,'王五',24,1003);
+INSERT INTO student VALUES(4,'赵六',23,1004);
+INSERT INTO student VALUES(5,'小明',21,1001);
+INSERT INTO student VALUES(6,'小红',26,1001);
+INSERT INTO student VALUES(7,'小亮',27,1002);
+```
+### 1.带比较运算符的子查询
+- 比较运算符前面我们提到过得，就是>、<、=、>=、<=、!=等
+查询张三同学所在班级的信息 MySQL命令：
+```
+select * from class where cid=(select classid from student where sname='张三');
+```
+
+### 2.带EXISTS关键字的子查询
+EXISTS关键字后面的参数可以是任意一个子查询， 它不产生任何数据只返回TRUE或FALSE。当返回值为TRUE时外层查询才会 执行
+假如王五同学在学生表中则从班级表查询所有班级信息 MySQL命令：
+
+```
+select * from class where exists (select * from student where sname='王五');
+```
 
 
+### 3.带ANY关键字的子查询
+- ANY关键字表示满足其中任意一个条件就返回一个结果作为外层查询条件。
+
+查询比任一学生所属班级号还大的班级编号 MySQL命令：
+
+```
+select * from class where cid>any(select classid from student);
+```
+
+### 4.带ALL关键字的子查询
+- ALL关键字与ANY有点类似，只不过带ALL关键字的子査询返回的结果需同时满足所有内层査询条件。
+
+查询比所有学生所属班级号还大的班级编号 MySQL命令：
+```
+select * from class where cid > all (select classid from student);
+```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## 总结
+重要（从关键字分析）：
+查询语句的书写顺序和执行顺序t
+select ===> from ===> where ===> group by ===> having ===> order by ===> limit
+查询语句的执行顺序
+from ===> where ===> group by ===> having ===> select ===> order by ===> limit
 
 
 
