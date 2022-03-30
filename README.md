@@ -1013,8 +1013,77 @@ select ===> from ===> where ===> group by ===> having ===> order by ===> limit
 查询语句的执行顺序
 from ===> where ===> group by ===> having ===> select ===> order by ===> limit
 
+# MySQL提高部分
+## 1存储引擎
+### 1.1 存储引擎介绍
+- innoDB
+> INNODB是默认的mysql存储引擎
+> - 特点
+> DML 操作遵循ACID模型，支持**事务**;
+> **行级锁**，提高并发访问性能
+> 支持**外键**FOREIGN KEY 约束，保证数据的完整性和正确性;
+> - 文件
+> xxz.ibd:xxx代表的是表名，innoDB引擎的每张表都会对应这样一个表空间文件，存储该表的表结构（frm，sdi)、数据和索引。
 
+- **MyISAM**
+- 介绍
+myisam是早期mysql的存储引擎
 
+- 特点
+不支持事务，不支持外键
+支持表锁、不支持行锁
+访问速度快
+- 文件
+xxx.sdi:存储表结构信息
+xxx.MYD:存储数据
+xxx.MYI:存储索引
+
+- **Memory**
+- 介绍
+ Memony引擎的表数据时存储在**内存**中，由于受到硬件的问题、或者断电问题的影向，只能将这些表作为临时表或缓存使用。
+ - 特点
+ 内存存放
+ hash索引
+ - 文件
+ xxx.sdi:存储表结构信息
+ ---------------------查表
+ 
+ ### 1.2.存储引擎选择
+ -----插图
+ 
+ - 总结
+ > 1、体系结构
+ > > 链接层、服务层、引擎层、存储层
+ > 2、存储引擎简介
+ > 3.存储引擎特点
+ > > innodb myisam：事务、锁、
+ - 番外安装linux的mysq.....
+ 1. 启动mysql服务
+ ```
+ systemctl start mtsql
+ systemctl restart mysql
+ systemctl stop mysql
+ ```
+ 2.查询自动生成的root用户密码
+ ```
+ grep 'temporary password' /var/log/mysql.log
+ ```
+ 3.执行命令：
+ ```
+ mysql -u root -p
+ ```
+ 4.输入查询到的自动生成的密码登陆：
+ 5.改密码
+ ```
+ ALTER USER 'root'@'localhost' IDENTIFIED BY '123456'
+ ```
+ 
+ 
+ 
+ 
+ ## 2.索引
+ 
+ 
 
 
 
